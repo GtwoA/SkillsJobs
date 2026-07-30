@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: SkillsJob
+  datasource:
+    url: jdbc:postgresql://localhost:5433/skillsjobs
+    username: postgres
+    password: ffcup9090
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
