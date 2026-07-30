@@ -1,8 +1,10 @@
 package com.example.SkillsJobs.entity;
 
+import com.example.SkillsJobs.enums.Position;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -19,13 +21,9 @@ public class UserEntity {
     private Long id;
 
     @Email
-    @NotBlank
-    @Size(min = 8, max = 50)
     @Column(name = "email", unique = true, updatable = true)
     private String email;
 
-    @NotBlank
-    @Size(min = 8, max = 50)
     @Column(name = "password", updatable = true)
     private String password;
 
@@ -35,5 +33,6 @@ public class UserEntity {
     @Column(name = "salary", updatable = true)
     private Integer salary;
 
-
+    @Column(name = "position")
+    private String position;
 }

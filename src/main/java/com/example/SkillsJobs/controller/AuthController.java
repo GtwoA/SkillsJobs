@@ -1,11 +1,35 @@
 package com.example.SkillsJobs.controller;
 
+import com.example.SkillsJobs.dto.UserRequestDTO;
+import com.example.SkillsJobs.dto.UserResponseDTO;
+import com.example.SkillsJobs.service.UserServiceImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/auth")
 @RequiredArgsConstructor
 public class AuthController {
+    private final UserServiceImpl userService;
+
+    @PostMapping("/sing-up")
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO requestDTO){
+        try {
+            return new ResponseEntity<>(userService.createUser(requestDTO), HttpStatus.CREATED);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/sing-in/{id}")
+    public ResponseEntity<UserResponseDTO> getUser(@Valid @PathVariable("id") Long id){
+        try {
+            return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }
