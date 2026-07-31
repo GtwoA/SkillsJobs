@@ -1,8 +1,9 @@
 package com.example.SkillsJobs.controller;
 
+import com.example.SkillsJobs.dto.UserCreateResponseDTO;
 import com.example.SkillsJobs.dto.UserRequestDTO;
 import com.example.SkillsJobs.dto.UserResponseDTO;
-import com.example.SkillsJobs.service.UserServiceImpl;
+import com.example.SkillsJobs.service.AuthServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,10 +14,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private final UserServiceImpl userService;
+    private final AuthServiceImpl userService;
 
     @PostMapping("/sing-up")
-    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO requestDTO){
+    public ResponseEntity<UserCreateResponseDTO> createUser(@Valid @RequestBody UserRequestDTO requestDTO){
         try {
             return new ResponseEntity<>(userService.createUser(requestDTO), HttpStatus.CREATED);
         } catch (Exception e){

@@ -1,13 +1,14 @@
 package com.example.SkillsJobs.entity;
 
-import com.example.SkillsJobs.enums.Position;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
-import lombok.experimental.FieldDefaults;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -35,4 +36,13 @@ public class UserEntity {
 
     @Column(name = "position")
     private String position;
+
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_skill",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id")
+    )
+    private Set<SkillEntity> skillList = new HashSet<>();
 }
