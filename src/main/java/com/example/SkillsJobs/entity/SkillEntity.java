@@ -27,11 +27,6 @@ public class SkillEntity {
     private String skill;
 
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "user_skill",
-            joinColumns = @JoinColumn(name = "skill_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "skillList")
     private Set<UserEntity> userEntity= new HashSet<>();
 }

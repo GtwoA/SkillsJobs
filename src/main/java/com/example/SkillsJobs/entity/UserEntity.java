@@ -5,10 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -45,4 +42,16 @@ public class UserEntity {
             inverseJoinColumns = @JoinColumn(name = "skill_id")
     )
     private Set<SkillEntity> skillList = new HashSet<>();
+
+    @Column(name = "balance")
+    private Integer balance;
+
+    public Set<SkillEntity> getSkills() {
+        return Collections.unmodifiableSet(skillList);
+    }
+
+    public void addSkill(SkillEntity skill) {
+        this.skillList.add(skill);
+        skill.getUserEntity().add(this);
+    }
 }

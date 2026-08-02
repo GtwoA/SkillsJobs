@@ -1,13 +1,13 @@
 package com.example.SkillsJobs.controller;
 
-import com.example.SkillsJobs.dto.SkillRequestDTO;
-import com.example.SkillsJobs.dto.SkillResponseDTO;
+import com.example.SkillsJobs.dto.*;
+import com.example.SkillsJobs.service.AuthServiceImpl;
+import com.example.SkillsJobs.service.UserServiceImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -15,8 +15,40 @@ import java.util.List;
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UserController {
+    private final UserServiceImpl userService;
+    private final AuthServiceImpl userServices;
+
     @PostMapping("/add")
-    public ResponseEntity<List<SkillResponseDTO>> addSkills(@RequestBody SkillRequestDTO request){
-        return null;
+    public ResponseEntity<UserSkillResponseDTO> addSkills(@RequestBody SkillRequestDTO request){
+        return new ResponseEntity<>(userService.addSkillToUser(request), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponseDTO> getUser(@Valid @PathVariable("id") Long id){
+        try {
+            return new ResponseEntity<>(userServices.getUser(id), HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id){
+        return new ResponseEntity<>(userService.deleteUser(id),HttpStatus.OK);
+    }
+
+    @PatchMapping("/update")
+    public ResponseEntity<UserCreateResponseDTO> updateUser(@RequestBody UserUpdateRequestDTO requestDTO){
+        try {
+            return new ResponseEntity<>(userService.updateUser(requestDTO), HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PatchMapping("/updateMoney")
+    public ResponseEntity<UserTransferBalanceResponseDTO> updateBalanceUser(
+            @RequestBody UserTransferBalanceRequestDTO requestDTO){
+        return new ResponseEntity<>(userService.userTransfer(requestDTO), HttpStatus.OK);
     }
 }

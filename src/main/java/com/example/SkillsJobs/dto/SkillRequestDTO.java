@@ -6,6 +6,6 @@ import java.util.Set;
 
 public record SkillRequestDTO(
         Set<String> skill,
-        UserEntity userId
+        Long userId
 ) {
 }

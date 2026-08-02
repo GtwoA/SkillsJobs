@@ -25,12 +25,4 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/sing-in/{id}")
-    public ResponseEntity<UserResponseDTO> getUser(@Valid @PathVariable("id") Long id){
-        try {
-            return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
 }
