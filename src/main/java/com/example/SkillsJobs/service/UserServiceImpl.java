@@ -3,6 +3,9 @@ package com.example.SkillsJobs.service;
 import com.example.SkillsJobs.dto.*;
 import com.example.SkillsJobs.entity.SkillEntity;
 import com.example.SkillsJobs.entity.UserEntity;
+import com.example.SkillsJobs.exception.InvalidBalanceException;
+import com.example.SkillsJobs.exception.SkillNotFoundException;
+import com.example.SkillsJobs.exception.UserNotFoundException;
 import com.example.SkillsJobs.repository.SkillRepository;
 import com.example.SkillsJobs.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +26,13 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserSkillResponseDTO addSkillToUser(SkillRequestDTO requestDTO) {
         UserEntity user = userRepository.findById(requestDTO.userId())
-                .orElseThrow(() -> new RuntimeException("Пользователь с таким id не найден"));
+                .orElseThrow(() ->
+                        new UserNotFoundException("Пользователь с таким id " + requestDTO.userId() + " не найден"));
 
         for (String skillName: requestDTO.skill()){
             SkillEntity skill = skillRepository.findBySkill(skillName)
-                    .orElseThrow(() -> new RuntimeException("Навык не найден"));
+                    .orElseThrow(() ->
+                            new SkillNotFoundException(requestDTO.skill() + " не найден."));
             user.addSkill(skill);
         }
 
@@ -41,7 +46,8 @@ public class UserServiceImpl implements UserService{
     @Override
     public Void deleteUser(Long id) {
         UserEntity user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Пользователь с таким id не найден!"));
+                .orElseThrow(() ->
+                        new UserNotFoundException("Пользователь с таким id " + id + " не найден"));
 
         userRepository.delete(user);
         return null;
@@ -50,7 +56,8 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserCreateResponseDTO updateUser(UserUpdateRequestDTO requestDTO) {
         UserEntity user = userRepository.findById(requestDTO.id())
-                .orElseThrow(() -> new RuntimeException("Пользователь с таким id не найден"));
+                .orElseThrow(() ->
+                        new UserNotFoundException("Пользователь с таким id " + requestDTO.id() + " не найден"));
 
 
         if (requestDTO.name() != null) {
@@ -79,36 +86,32 @@ public class UserServiceImpl implements UserService{
         );
     }
 
+    @Transactional
     @Override
     public UserTransferBalanceResponseDTO userTransfer(UserTransferBalanceRequestDTO requestDTO) {
-        List<UserEntity> user = userRepository.findAllById(requestDTO.userId());
+        if (requestDTO.balance() <= 0 || requestDTO.balance() == null){
+            throw new InvalidBalanceException("Баланс перевода отрицательный или пустой");
+        }
 
-        Long firstUser = user.getFirst().getId();
-        Long secondUser = user.getLast().getId();
+        UserEntity user1 = userRepository.findById(requestDTO.userIdTransfer())
+                .orElseThrow(() ->
+                        new UserNotFoundException("Пользователь с таким id " + requestDTO.userIdTransfer() + " не найден"));
 
-        UserEntity user1 = userRepository.findById(firstUser)
-                .orElseThrow(() -> new RuntimeException("Пользователь с таким id не найден"));
-
-        UserEntity user2 = userRepository.findById(secondUser)
-                .orElseThrow(() -> new RuntimeException("Пользователь с таким id не найден"));
+        UserEntity user2 = userRepository.findById(requestDTO.toUserId())
+                .orElseThrow(() ->
+                        new UserNotFoundException("Пользователь с таким id " + requestDTO.toUserId() + " не найден"));
 
 
         user1.setBalance(user1.getBalance() - requestDTO.balance());
-//        user2.setBalance(user2.getBalance() + requestDTO.balance());
-        try {
-            Thread.sleep(100000);
-            user2.setBalance(user2.getBalance() + requestDTO.balance());
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        user2.setBalance(user2.getBalance() + requestDTO.balance());
 
         UserEntity saveFirstUser = userRepository.save(user1);
         UserEntity saveSecondUser = userRepository.save(user2);
 
         Map<Long, Integer> map = new HashMap<>();
 
-        map.put(firstUser.longValue(), user1.getBalance());
-        map.put(secondUser.longValue(),user2.getBalance());
+        map.put(requestDTO.userIdTransfer(), user1.getBalance());
+        map.put(requestDTO.toUserId(),user2.getBalance());
 
         return new UserTransferBalanceResponseDTO(map);
     }

@@ -18,11 +18,7 @@ public class AuthController {
 
     @PostMapping("/sing-up")
     public ResponseEntity<UserCreateResponseDTO> createUser(@Valid @RequestBody UserRequestDTO requestDTO){
-        try {
-            return new ResponseEntity<>(userService.createUser(requestDTO), HttpStatus.CREATED);
-        } catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(userService.createUser(requestDTO), HttpStatus.CREATED);
     }
 
 }

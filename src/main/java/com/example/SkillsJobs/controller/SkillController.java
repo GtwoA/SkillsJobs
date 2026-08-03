@@ -18,7 +18,8 @@ public class SkillController {
     private final SkillServiceImpl skillService;
 
     @GetMapping("/get")
-    public ResponseEntity<OnlySkillResponseDTO> getAllSkill(@RequestParam String substring) {
+    public ResponseEntity<OnlySkillResponseDTO> getAllSkill(
+            @RequestParam String substring) {
         return new ResponseEntity<>(
                 skillService.getAllSkillBySubstring(new OnlySkillRequestDTO(substring)),
                 HttpStatus.OK

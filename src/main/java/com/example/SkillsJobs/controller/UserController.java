@@ -19,31 +19,27 @@ public class UserController {
     private final AuthServiceImpl userServices;
 
     @PostMapping("/add")
-    public ResponseEntity<UserSkillResponseDTO> addSkills(@RequestBody SkillRequestDTO request){
+    public ResponseEntity<UserSkillResponseDTO> addSkills(
+            @RequestBody SkillRequestDTO request){
         return new ResponseEntity<>(userService.addSkillToUser(request), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> getUser(@Valid @PathVariable("id") Long id){
-        try {
-            return new ResponseEntity<>(userServices.getUser(id), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<UserResponseDTO> getUser(
+            @Valid @PathVariable("id") Long id){
+        return new ResponseEntity<>(userServices.getUser(id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id){
+    public ResponseEntity<Void> deleteUser(
+            @PathVariable("id") Long id){
         return new ResponseEntity<>(userService.deleteUser(id),HttpStatus.OK);
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<UserCreateResponseDTO> updateUser(@RequestBody UserUpdateRequestDTO requestDTO){
-        try {
-            return new ResponseEntity<>(userService.updateUser(requestDTO), HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<UserCreateResponseDTO> updateUser(
+            @RequestBody UserUpdateRequestDTO requestDTO){
+        return new ResponseEntity<>(userService.updateUser(requestDTO), HttpStatus.OK);
     }
 
     @PatchMapping("/updateMoney")
